@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/imdario/mergo"
 	chglog "github.com/git-chglog/git-chglog"
+	"github.com/imdario/mergo"
 )
 
 // Info ...

@@ -24,9 +24,6 @@ COMMANDS   ?= $(wildcard ${SRCDIR}/cmd/*)
 # Determine binary names by stripping out the dir names
 BINS       := $(foreach cmd,${COMMANDS},$(notdir ${cmd}))
 
-GOOS := darwin
-
-
 .PHONY: bootstrap
 bootstrap: clean deps
 
@@ -42,9 +39,8 @@ clean:
 	rm -rf $(GOPATH)/bin/git-chglog
 	rm -rf cover.out
 
-.PHONY: bulid
-build: compile
-	# go build -i -o git-chglog
+.PHONY: build
+build: compile-all
 
 .PHONY: test
 test:
@@ -74,3 +70,24 @@ compile:
 		BUILD_FILES=`find $(SRCDIR)/cmd/$$b -type f -name "*.go"` ; \
 		CGO_ENABLED=0 GOOS=$(GOOS) $(GO) build -ldflags=$(LDFLAGS) -o $(BUILD_DIR)/$(GOOS)/$$b $$BUILD_FILES ; \
 	done
+
+compile-all:
+	@echo "=== $(PROJECT_NAME) === [ compile          ]: building commands:"
+	@mkdir -p $(BUILD_DIR)/$(GOOS)
+	@for b in $(BINS); do \
+		for os in $(COMPILE_OS); do \
+			echo "=== $(PROJECT_NAME) === [ compile          ]:     $(BUILD_DIR)$$os/$$b"; \
+			BUILD_FILES=`find $(SRCDIR)/cmd/$$b -type f -name "*.go"` ; \
+			CGO_ENABLED=0 GOOS=$$os $(GO) build -ldflags=$(LDFLAGS) -o $(BUILD_DIR)/$$os/$$b $$BUILD_FILES ; \
+		done \
+	done
+
+# Override GOOS for these specific targets
+compile-darwin: GOOS=darwin
+compile-darwin: compile
+
+compile-linux: GOOS=linux
+compile-linux: compile
+
+compile-windows: GOOS=windows
+compile-windows: compile
