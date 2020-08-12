@@ -24,7 +24,7 @@ COMMANDS   ?= $(wildcard ${SRCDIR}/cmd/*)
 # Determine binary names by stripping out the dir names
 BINS       := $(foreach cmd,${COMMANDS},$(notdir ${cmd}))
 
-GOOS := darwin
+GOOS := linux
 
 
 .PHONY: bootstrap
